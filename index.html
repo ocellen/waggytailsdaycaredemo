@@ -1,0 +1,1092 @@
+`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f8f4">
+<title>Waggy Tails | Dog Daycare</title>
+
+<style>
+:root {
+  --bg: #fff7fa;
+  --card: #ffffff;
+  --ink: #382632;
+  --muted: #897783;
+  --line: #f0dfe8;
+  --green: #b83270;
+  --pale: #fce4ef;
+  --amber: #a9680b;
+  --amber-bg: #fff0ce;
+  --red: #b93636;
+  --red-bg: #fde7e5;
+  --radius: 18px;
+}
+* { box-sizing:border-box }
+body {
+  margin:0; background:var(--bg); color:var(--ink);
+  font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,input,select { font:inherit }
+button { cursor:pointer }
+button:focus-visible,input:focus-visible,select:focus-visible {
+  outline:3px solid #9bc7a6; outline-offset:2px;
+}
+.topbar {
+  position:sticky; top:0; z-index:10;
+  background:#ffffffed; backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner {
+  max-width:1100px; margin:auto; padding:12px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:15px; flex-wrap:wrap;
+}
+.brand { display:flex; align-items:center; gap:10px }
+.logo {
+  width:42px; height:42px; border-radius:14px;
+  background:var(--green); color:white;
+  display:grid; place-items:center; font-size:23px;
+}
+.brand-name { font-size:17px; font-weight:800 }
+.brand-sub { font-size:11px; color:var(--muted) }
+.nav { display:flex; gap:5px }
+.nav button {
+  border:0; background:transparent; color:var(--muted);
+  border-radius:11px; padding:10px 13px; font-weight:750;
+}
+.nav button.active { background:var(--pale); color:var(--green) }
+.container { max-width:1100px; margin:auto; padding:25px 20px 60px }
+.view { display:none }
+.view.active { display:block }
+h1 {
+  font-size:clamp(26px,4vw,34px); line-height:1.15;
+  letter-spacing:-1px; margin:0 0 8px;
+}
+h2 { font-size:18px; margin:0; letter-spacing:-.3px }
+h3 { font-size:15px; margin:0 }
+p { margin:0 }
+.sub { color:var(--muted) }
+.page-head {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:15px; margin:0 0 22px;
+}
+.sample {
+  display:inline-block; padding:5px 10px; border-radius:20px;
+  background:#fff0d7; color:#86530b; font-size:11px; font-weight:800;
+  margin-bottom:16px;
+}
+.btn {
+  border:1px solid var(--line); border-radius:11px; padding:10px 13px;
+  background:white; color:var(--ink); font-weight:750;
+}
+.btn.primary { background:var(--green); color:white; border-color:var(--green) }
+.btn.small { font-size:12px; padding:7px 10px }
+.stats {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px; margin-bottom:20px;
+}
+.stat,.panel {
+  background:var(--card); border:1px solid var(--line);
+  border-radius:var(--radius); overflow:hidden;
+}
+.stat { padding:17px }
+.stat-label { color:var(--muted); font-size:12px; font-weight:650 }
+.stat-number { font-size:29px; font-weight:800; letter-spacing:-1px; margin:5px 0 }
+.stat-foot { color:var(--muted); font-size:11px }
+.warning .stat-number { color:var(--amber) }
+.danger .stat-number { color:var(--red) }
+.panel-head {
+  display:flex; justify-content:space-between; align-items:center;
+  gap:12px; padding:16px 18px; border-bottom:1px solid var(--line);
+}
+.panel-body { padding:17px }
+.week-grid {
+  display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:8px;
+}
+.day-card {
+  text-align:left; color:var(--ink); background:white;
+  border:1px solid var(--line); border-radius:14px; padding:11px;
+  min-width:0;
+}
+.day-card.selected { border:2px solid var(--green); padding:10px; background:#f1f7f0 }
+.day-card.full { background:#fff5f3 }
+.day-top { display:flex; justify-content:space-between; font-size:11px; font-weight:800 }
+.day-date { color:var(--muted); font-size:12px }
+.day-count { font-size:22px; font-weight:800; margin-top:12px }
+.day-total { color:var(--muted); font-size:11px }
+.progress { height:5px; background:#edf0eb; border-radius:10px; margin:9px 0; overflow:hidden }
+.progress span { display:block; height:100%; background:#5e9872 }
+.day-card.full .progress span { background:var(--red) }
+.day-remaining { color:var(--green); font-size:10px; font-weight:800 }
+.day-card.full .day-remaining { color:var(--red) }
+.layout-two {
+  display:grid; grid-template-columns:minmax(0,1.5fr) minmax(250px,1fr);
+  gap:16px; margin-top:19px;
+}
+.list-row {
+  display:flex; align-items:center; gap:11px; padding:12px 17px;
+  border-bottom:1px solid #f0f1ed;
+}
+.list-row:last-child { border-bottom:0 }
+.avatar {
+  width:42px; height:42px; flex:0 0 42px; border-radius:13px;
+  background:#eaf1e7; display:grid; place-items:center; font-size:22px;
+}
+.row-main { flex:1; min-width:0 }
+.row-title { font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.row-sub { color:var(--muted); font-size:12px; margin-top:2px }
+.pill {
+  display:inline-flex; align-items:center; border-radius:20px;
+  padding:5px 9px; font-size:10px; font-weight:800; white-space:nowrap;
+}
+.pill.green { background:var(--pale); color:var(--green) }
+.pill.amber { background:var(--amber-bg); color:var(--amber) }
+.pill.red { background:var(--red-bg); color:var(--red) }
+.pill.gray { background:#eef0ec; color:#657068 }
+.alert {
+  padding:12px; border-radius:12px; margin-bottom:10px;
+  display:flex; gap:10px; align-items:flex-start;
+}
+.alert.red { background:#fff0ee; border:1px solid #f5d7d3 }
+.alert.amber { background:#fff7e5; border:1px solid #f4e2b9 }
+.alert strong { display:block; margin-bottom:3px }
+.alert p { color:var(--muted); font-size:12px }
+.footer-note { color:var(--muted); font-size:11px; margin-top:13px }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="logo">🐾</div>
+      <div>
+        <div class="brand-name">Waggy Tails</div>
+        <div class="brand-sub">DOG DAYCARE · IRELAND</div>
+      </div>
+    </div>
+    <nav class="nav" aria-label="Main navigation">
+      <button class="active" data-view="bookings">▦ Bookings</button>
+      <button data-view="today">☀ Today</button>
+      <button data-view="pupdate">♡ Pupdate</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+<div><span class="sample">● DEMO · ALL RECORDS ARE SAMPLE DATA</span></div>
+
+<section id="bookings" class="view active">
+  <div class="page-head">
+    <div>
+      <h1>Bookings & capacity</h1>
+      <p class="sub">Your week at a glance. Happy dogs, organised days.</p>
+    </div>
+    <button class="btn primary" id="addBookingBtn">＋ New booking</button>
+  </div>
+
+  <div class="stats">
+    <article class="stat">
+      <div class="stat-label">Today's bookings</div>
+      <div class="stat-number" id="statToday">—</div>
+      <div class="stat-foot">Out of 40 places</div>
+    </article>
+    <article class="stat">
+      <div class="stat-label">Places left today</div>
+      <div class="stat-number" id="statPlaces">—</div>
+      <div class="stat-foot" id="statOccupancy">—</div>
+    </article>
+    <article class="stat warning">
+      <div class="stat-label">Vaccinations due soon</div>
+      <div class="stat-number" id="statAmber">—</div>
+      <div class="stat-foot">Within 14 days</div>
+    </article>
+    <article class="stat danger">
+      <div class="stat-label">Value at risk today</div>
+      <div class="stat-number" id="statRisk">—</div>
+      <div class="stat-foot">Illustrative blocked booking fees</div>
+    </article>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Weekly availability</h2>
+        <p class="sub" id="weekLabel" style="font-size:12px"></p>
+      </div>
+      <button class="btn small" id="todayWeekBtn">This week ↗</button>
+    </div>
+    <div class="panel-body">
+      <div class="week-grid" id="weekGrid"></div>
+      <p class="footer-note">40 dogs maximum per day. Select a day to view bookings. Amber = vaccination expires within 14 days; red = expired or missing.</p>
+    </div>
+  </div>
+
+  <div class="layout-two">
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2 id="selectedDayTitle">Selected day</h2>
+          <p class="sub" id="selectedDaySub" style="font-size:12px"></p>
+        </div>
+        <button class="btn small primary" id="selectedAddBtn">＋ Add</button>
+      </div>
+      <div id="bookingList"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Vaccination watch</h2>
+          <p class="sub" style="font-size:12px">Records needing attention</p>
+        </div>
+      </div>
+      <div class="panel-body" id="vaccinationWatch"></div>
+    </div>
+  </div>
+</section>
+
+<section id="today" class="view">
+  <div class="page-head">
+    <div>
+      <h1>Today's pack ☀</h1>
+      <p class="sub" id="todayDateLabel">Care notes, check-ins and vaccination checks.</p>
+    </div>
+    <span class="pill green" id="attendanceCount">0 dogs</span>
+  </div>
+  <div class="stats">
+    <article class="stat"><div class="stat-label">Expected today</div><div class="stat-number" id="todayExpected">—</div><div class="stat-foot">Dogs scheduled</div></article>
+    <article class="stat"><div class="stat-label">Checked in</div><div class="stat-number" id="todayChecked">—</div><div class="stat-foot">Attendance recorded</div></article>
+    <article class="stat warning"><div class="stat-label">Due soon</div><div class="stat-number" id="todayAmber">—</div><div class="stat-foot">Amber alerts</div></article>
+    <article class="stat danger"><div class="stat-label">Check-in blocked</div><div class="stat-number" id="todayBlocked">—</div><div class="stat-foot">Expired or missing record</div></article>
+  </div>
+  <div class="panel">
+    <div class="panel-head">
+      <div><h2>Today's dogs</h2><p class="sub" style="font-size:12px">Tap an activity to save a note instantly.</p></div>
+      <input class="input" id="todaySearch" placeholder="Search dogs…" aria-label="Search today's dogs">
+    </div>
+    <div class="panel-body">
+      <div id="todayDogList" class="today-list"></div>
+      <p class="footer-note">Demo only. Verify actual vaccination documents and business rules before real-world use.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pupdate" class="view">
+  <div class="page-head">
+    <div><h1>A little update ♡</h1><p class="sub">A happy day, one little moment at a time.</p></div>
+    <span class="pill green">Owner view · Demo</span>
+  </div>
+  <div class="owner-hero">
+    <div>
+      <span class="pill" style="background:#ffffff30;color:white">WAGGY TAILS DAILY REPORT</span>
+      <h2 id="ownerHeroName">Your dog's day</h2>
+      <p id="ownerHeroDate"></p>
+    </div>
+  </div>
+  <div class="owner-layout">
+    <div class="panel">
+      <div class="panel-head"><div><h2>Today's little moments</h2><p class="sub" style="font-size:12px">Only this dog's notes are shown.</p></div></div>
+      <div class="panel-body" id="ownerNotes"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Choose a sample owner</h2></div>
+      <div class="panel-body">
+        <p class="sub" style="margin-bottom:10px">Preview the view an owner would see.</p>
+        <label for="ownerSelect">Dog / owner</label>
+        <select id="ownerSelect" class="input" style="margin-top:6px"></select>
+        <div style="height:16px"></div>
+        <div class="alert" style="background:#eef5e9">
+          <div>🔒</div><div><strong>Private by design</strong><p>This demo filters by dog. A real app must enforce authentication and permissions on a server.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<style>
+/* Additional component and mobile styling */
+.today-list {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px;
+}
+.dog-card { padding:15px; border:1px solid var(--line); border-radius:16px; background:white }
+.dog-card-top { display:flex; align-items:center; gap:11px; margin-bottom:13px }
+.dog-card-foot { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap }
+.note-buttons { display:flex; gap:7px; flex-wrap:wrap; margin-top:11px }
+.note-btn {
+  border:1px solid var(--line); border-radius:10px; padding:9px 10px;
+  background:white; color:#455249; font-size:12px; font-weight:750;
+}
+.note-btn.done { background:var(--pale); color:var(--green); border-color:#c3ddca }
+.input {
+  width:100%; min-width:0; border:1px solid var(--line); border-radius:11px;
+  padding:10px 12px; background:white; color:var(--ink);
+}
+.search { max-width:240px }
+.owner-hero {
+  min-height:200px; padding:23px; border-radius:21px; color:white;
+  display:flex; align-items:flex-end; overflow:hidden;
+  background:linear-gradient(90deg,#172d22e8,#172d2230),
+  url('https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=1200&q=80') center/cover;
+}
+.owner-hero h2 { font-size:26px; margin:10px 0 5px }
+.owner-hero p { color:#eef5ef }
+.owner-layout { display:grid; grid-template-columns:1.3fr .7fr; gap:16px; margin-top:18px }
+.owner-note { display:flex; gap:13px; padding:15px 0; border-bottom:1px solid var(--line) }
+.owner-note:last-child { border-bottom:0 }
+.note-emoji { width:43px; height:43px; flex-shrink:0; display:grid; place-items:center; background:#eef5e9; border-radius:13px; font-size:21px }
+.empty { text-align:center; padding:28px 12px; color:var(--muted) }
+.empty .emoji { font-size:30px; margin-bottom:8px }
+.backdrop {
+  display:none; position:fixed; inset:0; z-index:50; padding:16px;
+  background:#17231dc0; align-items:center; justify-content:center;
+}
+.backdrop.open { display:flex }
+.modal {
+  width:min(100%,470px); max-height:90vh; overflow:auto;
+  background:white; border-radius:22px; padding:22px;
+}
+.modal-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px }
+.close { border:0; background:#f0f2ed; border-radius:10px; width:36px; height:36px; font-size:21px }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:13px }
+.field { display:flex; flex-direction:column; gap:6px; min-width:0 }
+.field label { font-size:12px; font-weight:750 }
+.field.full { grid-column:1/-1 }
+.form-actions { display:flex; justify-content:flex-end; gap:9px; margin-top:20px }
+.toast {
+  position:fixed; z-index:70; bottom:22px; left:50%;
+  transform:translate(-50%,15px); opacity:0; pointer-events:none;
+  max-width:calc(100% - 28px); padding:12px 17px; border-radius:13px;
+  background:#1e3428; color:white; text-align:center; transition:.2s;
+}
+.toast.show { opacity:1; transform:translate(-50%,0) }
+@media(max-width:850px) {
+  .stats { grid-template-columns:repeat(2,minmax(0,1fr)) }
+  .week-grid { grid-template-columns:repeat(4,minmax(0,1fr)) }
+  .layout-two,.owner-layout { grid-template-columns:1fr }
+  .today-list { grid-template-columns:1fr }
+}
+@media(max-width:540px) {
+  .nav-inner { padding:10px 13px; gap:10px }
+  .brand-name { font-size:15px }
+  .nav { display:grid; grid-template-columns:repeat(3,1fr); width:100%; gap:4px }
+  .nav button { padding:10px 5px; font-size:12px }
+  .container { padding:20px 13px 45px }
+  .page-head { align-items:flex-start; gap:10px }
+  .page-head .btn { font-size:12px; padding:9px }
+  .stats { gap:9px }
+  .stat { padding:13px }
+  .stat-number { font-size:25px }
+  .week-grid { grid-template-columns:repeat(2,minmax(0,1fr)) }
+  .day-card { padding:12px }
+  .day-card.selected { padding:11px }
+  .day-count { margin-top:7px }
+  .panel-head,.panel-body { padding:13px }
+  .dog-card { padding:13px }
+  .search { max-width:145px }
+  .owner-hero { min-height:185px; padding:18px }
+  .form-grid { grid-template-columns:1fr }
+  .field.full { grid-column:auto }
+}
+/* Waggy Tails blush-pink theme */
+.logo {
+  background: #b83270;
+}
+.nav button.active {
+  background: #fce4ef;
+  color: #a32660;
+}
+.btn.primary {
+  background: #b83270;
+  border-color: #b83270;
+  color: white;
+}
+.btn.primary:hover {
+  background: #98245b;
+}
+.progress span {
+  background: #d65b96;
+}
+.day-card.selected {
+  border-color: #b83270;
+  background: #fff0f6;
+}
+.day-card.full .progress span {
+  background: #c33c55;
+}
+.day-remaining {
+  color: #a32660;
+}
+.avatar {
+  background: #fce4ef;
+}
+.note-btn.done {
+  background: #fce4ef;
+  color: #a32660;
+  border-color: #efbad3;
+}
+.owner-hero {
+  background:
+    linear-gradient(90deg, #59223fe8, #59223f30),
+    url('https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=1200&q=80')
+    center/cover;
+}
+.note-emoji {
+  background: #fce4ef;
+}
+.alert[style*="eef5e9"] {
+  background: #fff0f6 !important;
+}
+</style>
+
+<!-- New booking dialog -->
+<div class="backdrop" id="bookingModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 id="modalTitle">Add a booking</h2>
+        <p class="sub" style="font-size:12px">Create a sample dog booking.</p>
+      </div>
+      <button class="close" id="closeModal" aria-label="Close">×</button>
+    </div>
+    <form id="bookingForm">
+      <div class="form-grid">
+        <div class="field">
+          <label for="dogName">Dog's name</label>
+          <input class="input" id="dogName" required placeholder="e.g. Milo">
+        </div>
+        <div class="field">
+          <label for="ownerName">Owner's name</label>
+          <input class="input" id="ownerName" required placeholder="e.g. Sarah Murphy">
+        </div>
+        <div class="field full">
+          <label for="bookingDate">Booking date</label>
+          <input class="input" type="date" id="bookingDate" required>
+        </div>
+        <div class="field full">
+          <label for="vaxDate">Kennel cough vaccination expiry</label>
+          <input class="input" type="date" id="vaxDate" required>
+          <span class="sub" style="font-size:11px">Expired vaccination records cannot be booked.</span>
+        </div>
+      </div>
+      <div id="formMessage" role="status" style="font-size:12px;margin-top:12px"></div>
+      <div class="form-actions">
+        <button type="button" class="btn" id="cancelModal">Cancel</button>
+        <button type="submit" class="btn primary">Save booking</button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+"use strict";
+
+const CAPACITY = 40;
+const DAILY_FEE = 32; // Fictional demo fee in euros.
+const STORAGE_KEY = "waggyTailsDemo_v1";
+const $ = id => document.getElementById(id);
+const DAY = 86400000;
+
+function startOfDay(d) {
+  const x = new Date(d);
+  x.setHours(0,0,0,0);
+  return x;
+}
+function key(d) {
+  const x = startOfDay(new Date(d));
+  return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");
+}
+function parseDate(s) {
+  if (!s) return null;
+  const [y,m,d] = s.split("-").map(Number);
+  return new Date(y,m-1,d);
+}
+function addDays(d,n) {
+  const x = new Date(d);
+  x.setDate(x.getDate()+n);
+  return x;
+}
+function fmt(d,opts={weekday:"short",day:"numeric",month:"short"}) {
+  return new Intl.DateTimeFormat("en-IE",opts).format(new Date(d));
+}
+function money(n) {
+  return new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(n);
+}
+function uid() {
+  return "id-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,7);
+}
+function esc(s) {
+  return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function mondayOf(d) {
+  const x=startOfDay(d);
+  x.setDate(x.getDate()+(x.getDay()===0?-6:1-x.getDay()));
+  return x;
+}
+
+const today = startOfDay(new Date());
+let selectedDate = new Date(today);
+let state;
+let activeView = "bookings";
+
+const sampleNames = [
+ ["Milo","Sarah Murphy"],["Luna","Aoife Kelly"],
+ ["Buddy","James Byrne"],["Bella","Emma Walsh"],
+ ["Charlie","Conor Ryan"],["Daisy","Niamh Doyle"],
+ ["Teddy","Grace Nolan"],["Poppy","Sean O'Brien"],
+ ["Alfie","Kate Lynch"],["Coco","David Kelly"],
+ ["Bailey","Fiona Burke"],["Rosie","Patrick Hayes"],
+ ["Oscar","Laura Finn"],["Molly","Eoin Martin"],
+ ["Archie","Ciara Reid"],["Ruby","Tom Gallagher"],
+ ["Finn","Orla Quinn"],["Biscuit","Rachel Moore"],
+ ["Murphy","Liam Casey"],["Willow","Sophie Ward"],
+ ["Rex","Ava Power"],["Penny","Jack Doyle"],
+ ["Frankie","Mia Brennan"],["Pepper","Luke Walsh"],
+ ["Ollie","Amy Byrne"],["Maple","Ben Ryan"],
+ ["Pippa","Ella Murphy"],["Scout","Max O'Neill"],
+ ["Bowie","Holly Clarke"],["Maisie","Dylan Fox"],
+ ["Cooper","Erin Hayes"],["Honey","Noah Kelly"],
+ ["Rory","Lucy Daly"],["Nala","Cian Burke"],
+ ["Blue","Megan Ward"],["Winnie","Adam Flynn"],
+ ["Dexter","Isla Quinn"],["Mabel","Finn O'Brien"],
+ ["George","Chloe Ryan"],["Indie","Sam Nolan"]
+];
+
+function makeSampleData() {
+  const dogs = sampleNames.map((n,i)=>({
+    id:"dog-"+(i+1),
+    name:n[0],
+    owner:n[1],
+    vaxExpiry:key(addDays(today,
+      i===0?-4 : i===1?6 : i===2?14 : i===3?2 :
+      i===4?45 : i===5?-1 : 45+(i%80))),
+    notes:[]
+  }));
+
+  // Sample week: quieter Wednesday, full Friday.
+  const counts=[18,23,10,26,40,9,5];
+  const monday=mondayOf(today);
+  const bookings=[];
+
+  counts.forEach((count,dayIndex)=>{
+    for(let i=0;i<count;i++) {
+      bookings.push({
+        id:uid(),
+        dogId:dogs[i%dogs.length].id,
+        date:key(addDays(monday,dayIndex)),
+        checkedIn:false,
+        notes:[]
+      });
+    }
+  });
+
+  const todayBookings=bookings.filter(b=>b.date===key(today));
+  ["ate","walked","played","napped","played","ate","walked"]
+    .forEach((type,i)=>{
+      if(todayBookings[i]) {
+        todayBookings[i].notes.push({
+          id:uid(),type,
+          at:new Date(Date.now()-(7-i)*3600000).toISOString()
+        });
+      }
+    });
+
+  return {dogs,bookings,sample:true};
+}
+
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+    return true;
+  } catch(e) {
+    toast("Browser storage unavailable; changes may not persist.");
+    return false;
+  }
+}
+function load() {
+  try {
+    const saved=localStorage.getItem(STORAGE_KEY);
+    if(saved) {
+      const parsed=JSON.parse(saved);
+      if(parsed && Array.isArray(parsed.dogs) && Array.isArray(parsed.bookings)) return parsed;
+    }
+  } catch(e) {}
+  return makeSampleData();
+}
+function toast(message) {
+  const el=$("toast");
+  el.textContent=message;
+  el.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer=setTimeout(()=>el.classList.remove("show"),2600);
+}
+function dogById(id) {
+  return state.dogs.find(d=>d.id===id);
+}
+function bookingsFor(date) {
+  return state.bookings.filter(b=>b.date===key(date));
+}
+function uniqueDogsFor(date) {
+  const seen=new Set();
+  return bookingsFor(date).filter(b=>{
+    if(seen.has(b.dogId)) return false;
+    seen.add(b.dogId);
+    return true;
+  });
+}
+
+/* Vaccination rules:
+   expired or missing = RED; expiry in 0–14 days = AMBER. */
+function vaccinationStatus(dog) {
+  const expiry=parseDate(dog && dog.vaxExpiry);
+  if(!expiry) return {kind:"red",label:"Record missing"};
+  const days=Math.round((expiry-today)/DAY);
+  if(days<0) return {kind:"red",label:"Expired"};
+  if(days<=14) return {kind:"amber",label:days===0?"Expires today":`Due in ${days}d`};
+  return {kind:"green",label:"In date"};
+}
+function pill(dog) {
+  const s=vaccinationStatus(dog);
+  return `<span class="pill ${s.kind}">${s.kind==="green"?"✓":"●"} ${esc(s.label)}</span>`;
+}
+function avatar(dog) {
+  const emojis=["🐕","🐶","🦮","🐩","🐕‍🦺"];
+  const i=Math.max(0,state.dogs.findIndex(d=>d.id===dog.id));
+  return `<div class="avatar">${emojis[i%emojis.length]}</div>`;
+}
+
+function renderStats() {
+  const todays=bookingsFor(today);
+  const blocked=todays.filter(b=>{
+    const d=dogById(b.dogId);
+    return !d || vaccinationStatus(d).kind==="red";
+  }).length;
+  $("statToday").textContent=todays.length;
+  $("statPlaces").textContent=Math.max(0,CAPACITY-todays.length);
+  $("statOccupancy").textContent=Math.round(todays.length/CAPACITY*100)+"% capacity used";
+  $("statAmber").textContent=state.dogs.filter(d=>vaccinationStatus(d).kind==="amber").length;
+  $("statRisk").textContent=money(blocked*DAILY_FEE);
+
+  $("todayExpected").textContent=todays.length;
+  $("todayChecked").textContent=todays.filter(b=>b.checkedIn).length;
+  $("todayAmber").textContent=uniqueDogsFor(today).filter(b=>{
+    const d=dogById(b.dogId);
+    return d && vaccinationStatus(d).kind==="amber";
+  }).length;
+  $("todayBlocked").textContent=blocked;
+  $("attendanceCount").textContent=todays.length+" scheduled";
+}
+
+function renderWeek() {
+  const week=mondayOf(selectedDate);
+  $("weekLabel").textContent=fmt(week,{day:"numeric",month:"short"})+" – "+
+    fmt(addDays(week,6),{day:"numeric",month:"short",year:"numeric"});
+
+  $("weekGrid").innerHTML=Array.from({length:7},(_,i)=>{
+    const d=addDays(week,i), count=bookingsFor(d).length;
+    const full=count>=CAPACITY, remaining=Math.max(0,CAPACITY-count);
+    return `<button class="day-card ${key(d)===key(selectedDate)?"selected":""} ${full?"full":""}" data-date="${key(d)}">
+      <div class="day-top"><span>${fmt(d,{weekday:"short"})}</span><span>${key(d)===key(today)?"●":""}</span></div>
+      <div class="day-date">${fmt(d,{day:"numeric",month:"short"})}</div>
+      <div class="day-count">${count}<span style="font-size:12px;color:var(--muted)"> / 40</span></div>
+      <div class="day-total">dogs booked</div>
+      <div class="progress"><span style="width:${Math.min(100,count/CAPACITY*100)}%"></span></div>
+      <div class="day-remaining">${full?"FULL":remaining+" places left"}</div>
+    </button>`;
+  }).join("");
+
+  document.querySelectorAll(".day-card").forEach(btn=>{
+    btn.onclick=()=>{
+      selectedDate=parseDate(btn.dataset.date);
+      renderAll();
+    };
+  });
+}
+
+function renderBookingList() {
+  const bookings = bookingsFor(selectedDate);
+
+  $("selectedDayTitle").textContent =
+    fmt(selectedDate, {
+      weekday: "long",
+      day: "numeric",
+      month: "long"
+    });
+
+  $("selectedDaySub").textContent =
+    `${bookings.length} of 40 booked · ${Math.max(0, 40 - bookings.length)} places left`;
+
+  $("bookingList").innerHTML = bookings.length
+    ? bookings.map(b => {
+        const d = dogById(b.dogId);
+        if (!d) return "";
+
+        return `
+          <div class="list-row">
+            ${avatar(d)}
+            <div class="row-main">
+              <div class="row-title">${esc(d.name)}</div>
+              <div class="row-sub">${esc(d.owner)}</div>
+            </div>
+            ${pill(d)}
+            <button
+              class="btn small cancel-booking"
+              data-id="${b.id}"
+              aria-label="Cancel booking for ${esc(d.name)}"
+              title="Cancel booking">
+              Cancel
+            </button>
+          </div>`;
+      }).join("")
+    : `<div class="empty">
+         <div class="emoji">🐾</div>
+         <strong>No bookings yet</strong>
+         <p>There is room for 40 dogs.</p>
+       </div>`;
+
+  document.querySelectorAll(".cancel-booking").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const booking = state.bookings.find(
+        b => b.id === btn.dataset.id
+      );
+
+      if (!booking) return;
+
+      const dog = dogById(booking.dogId);
+      if (!dog) return;
+
+      const confirmed = confirm(
+        `Cancel ${dog.name}'s booking for ${
+          fmt(parseDate(booking.date), {
+            weekday: "long",
+            day: "numeric",
+            month: "long"
+          })
+        }? This will free up one place.`
+      );
+
+      if (!confirmed) return;
+
+      state.bookings = state.bookings.filter(
+        b => b.id !== booking.id
+      );
+
+      save();
+      renderAll();
+      toast(`${dog.name}'s booking cancelled. One place freed.`);
+    });
+  });
+}
+function renderVaccinationWatch() {
+  const list=state.dogs.map(d=>({dog:d,status:vaccinationStatus(d)}))
+    .filter(x=>x.status.kind!=="green")
+    .sort((a,b)=>(a.status.kind==="red"?0:1)-(b.status.kind==="red"?0:1));
+
+  $("vaccinationWatch").innerHTML=list.length ? list.slice(0,8).map(x=>`
+    <div class="alert ${x.status.kind}">
+      <div>${x.status.kind==="red"?"⛔":"⚠️"}</div>
+      <div><strong>${esc(x.dog.name)} · ${esc(x.status.label)}</strong>
+      <p>${x.status.kind==="red"?"Check-in blocked until records are verified.":"Vaccination expires within 14 days."}</p></div>
+    </div>`).join("") : `<div class="empty">All sample vaccinations are in date.</div>`;
+}
+const activities=[
+  {type:"ate",label:"🍽 Ate",emoji:"🍽",description:"Enjoyed a meal"},
+  {type:"walked",label:"🦮 Walked",emoji:"🦮",description:"Went for a walk"},
+  {type:"played",label:"🎾 Played",emoji:"🎾",description:"Had playtime"},
+  {type:"napped",label:"💤 Napped",emoji:"💤",description:"Enjoyed a nap"}
+];
+
+function renderToday() {
+  $("todayDateLabel").textContent=fmt(today,{
+    weekday:"long",day:"numeric",month:"long",year:"numeric"
+  })+" · Quick notes for busy paws.";
+
+  const q=$("todaySearch").value.trim().toLowerCase();
+  const dogs=uniqueDogsFor(today).map(b=>({b,d:dogById(b.dogId)}))
+    .filter(x=>x.d && (x.d.name+" "+x.d.owner).toLowerCase().includes(q));
+
+  $("todayDogList").innerHTML=dogs.length ? dogs.map(({b,d})=>{
+    const status=vaccinationStatus(d);
+    const blocked=status.kind==="red";
+    const notes=b.notes||[];
+
+    return `<article class="dog-card">
+      <div class="dog-card-top">
+        ${avatar(d)}
+        <div class="row-main">
+          <div class="row-title">${esc(d.name)}</div>
+          <div class="row-sub">${esc(d.owner)}</div>
+        </div>
+      </div>
+      <div class="dog-card-foot">
+        ${pill(d)}
+        ${blocked
+          ? '<span class="pill red">Check-in blocked</span>'
+          : `<button class="btn small ${b.checkedIn?"":"primary"} checkin" data-id="${b.id}">${b.checkedIn?"✓ Checked in":"Check in"}</button>`}
+      </div>
+      ${blocked
+        ? `<div class="alert red" style="margin-top:12px">
+            <div>⛔</div><div><strong>Do not check in</strong>
+            <p>Required vaccination is expired or missing. Verify the record first.</p></div>
+           </div>`
+        : `<div class="sub" style="font-size:11px;font-weight:750;margin-top:14px">QUICK NOTES · TAP TO SAVE</div>
+          <div class="note-buttons">${activities.map(a=>`
+            <button class="note-btn ${notes.some(n=>n.type===a.type)?"done":""}"
+              data-booking="${b.id}" data-type="${a.type}">${a.label}</button>`).join("")}
+          </div>
+          <div class="row-sub" style="margin-top:9px">${notes.length} notes saved today</div>`}
+    </article>`;
+  }).join("") : `<div class="empty" style="grid-column:1/-1"><div class="emoji">🐾</div>No dogs found.</div>`;
+
+  document.querySelectorAll(".checkin").forEach(btn=>{
+    btn.onclick=()=>{
+      const b=state.bookings.find(x=>x.id===btn.dataset.id);
+      if(!b)return;
+      const d=dogById(b.dogId);
+      if(!d || vaccinationStatus(d).kind==="red") {
+        toast("Check-in blocked: verify vaccination records.");
+        return;
+      }
+      b.checkedIn=true;
+      save();renderAll();toast(d.name+" checked in ✓");
+    };
+  });
+
+  document.querySelectorAll(".note-btn").forEach(btn=>{
+    btn.onclick=()=>{
+      const b=state.bookings.find(x=>x.id===btn.dataset.booking);
+      if(!b)return;
+      const d=dogById(b.dogId);
+      if(!d || vaccinationStatus(d).kind==="red") {
+        toast("Activity note blocked for this dog.");
+        return;
+      }
+      b.notes=b.notes||[];
+      const existing=b.notes.find(n=>n.type===btn.dataset.type);
+
+      if(existing) {
+        b.notes=b.notes.filter(n=>n.type!==btn.dataset.type);
+        toast("Activity note removed.");
+      } else {
+        b.notes.push({
+          id:uid(),type:btn.dataset.type,
+          at:new Date().toISOString()
+        });
+        toast(d.name+": "+btn.dataset.type+" saved ✓");
+      }
+      save();renderAll();
+    };
+  });
+}
+
+function renderOwnerSelect() {
+  const select=$("ownerSelect");
+  const previous=select.value;
+  select.innerHTML=state.dogs.map(d=>
+    `<option value="${d.id}">${esc(d.name)} — ${esc(d.owner)}</option>`
+  ).join("");
+  if(state.dogs.some(d=>d.id===previous))select.value=previous;
+  renderPupdate();
+}
+
+function renderPupdate() {
+  const d=dogById($("ownerSelect").value);
+  if(!d) {
+    $("ownerHeroName").textContent="Your dog's day";
+    $("ownerNotes").innerHTML='<div class="empty">Choose a sample dog.</div>';
+    return;
+  }
+
+  $("ownerHeroName").textContent=d.name+"'s day";
+  $("ownerHeroDate").textContent=fmt(today,{
+    weekday:"long",day:"numeric",month:"long"
+  })+" · Waggy Tails";
+
+  const bookings=bookingsFor(today).filter(b=>b.dogId===d.id);
+  const notes=bookings.flatMap(b=>b.notes||[])
+    .sort((a,b)=>new Date(a.at)-new Date(b.at));
+
+  if(!bookings.length) {
+    $("ownerNotes").innerHTML=`<div class="empty"><div class="emoji">🐾</div>
+      <strong>No daycare booking today</strong>
+      <p>${esc(d.name)} has no booking on today's schedule.</p></div>`;
+    return;
+  }
+  if(!notes.length) {
+    $("ownerNotes").innerHTML=`<div class="empty"><div class="emoji">💚</div>
+      <strong>${esc(d.name)}'s day is underway</strong>
+      <p>Staff haven't added an update yet. Check back soon!</p></div>`;
+    return;
+  }
+
+  $("ownerNotes").innerHTML=notes.map(n=>{
+    const a=activities.find(x=>x.type===n.type)||activities[0];
+    return `<div class="owner-note">
+      <div class="note-emoji">${a.emoji}</div>
+      <div><strong>${esc(a.description)}</strong>
+      <div class="sub" style="font-size:12px;margin-top:3px">
+        ${new Intl.DateTimeFormat("en-IE",{hour:"2-digit",minute:"2-digit"}).format(new Date(n.at))}
+      </div></div>
+    </div>`;
+  }).join("");
+}
+
+function renderAll() {
+  renderStats();
+  renderWeek();
+  renderBookingList();
+  renderVaccinationWatch();
+  renderToday();
+  renderPupdate();
+}
+
+function switchView(view) {
+  activeView=view;
+  document.querySelectorAll(".view").forEach(el=>{
+    el.classList.toggle("active",el.id===view);
+  });
+  document.querySelectorAll(".nav button").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.view===view);
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+  renderAll();
+}
+
+function openModal() {
+  $("formMessage").textContent="";
+  $("bookingDate").value=key(selectedDate);
+  $("vaxDate").value=key(addDays(today,60));
+  $("bookingModal").classList.add("open");
+  setTimeout(()=>$("dogName").focus(),40);
+}
+function closeModal() {
+  $("bookingModal").classList.remove("open");
+}
+
+/* Find the nearest later date with an available place. */
+function nearestDate(from) {
+  for(let i=1;i<=30;i++) {
+    const d=addDays(from,i);
+    if(bookingsFor(d).length<CAPACITY)return d;
+  }
+  return null;
+}
+
+$("bookingForm").addEventListener("submit",e=>{
+  e.preventDefault();
+
+  const name=$("dogName").value.trim();
+  const owner=$("ownerName").value.trim();
+  const date=$("bookingDate").value;
+  const expiry=$("vaxDate").value;
+  const msg=$("formMessage");
+
+  if(!name||!owner||!date||!expiry)return;
+
+  const bookingDay=parseDate(date);
+  const expiryDay=parseDate(expiry);
+
+  if(expiryDay<bookingDay) {
+    msg.style.color="var(--red)";
+    msg.textContent="Booking blocked: vaccination will have expired by this date.";
+    return;
+  }
+
+  if(bookingsFor(bookingDay).length>=CAPACITY) {
+    const alternative=nearestDate(bookingDay);
+    msg.style.color="var(--red)";
+    msg.textContent=alternative
+      ? "This day is full. Nearest available: "+fmt(alternative,{weekday:"long",day:"numeric",month:"short"})+"."
+      : "This day is full; no availability found within 30 days.";
+
+    if(alternative) {
+      const use=document.createElement("button");
+      use.type="button";
+      use.className="btn small";
+      use.style.marginTop="8px";
+      use.textContent="Use suggested date";
+      use.onclick=()=>{
+        $("bookingDate").value=key(alternative);
+        msg.style.color="var(--green)";
+        msg.textContent="Alternative date selected. Save again to book.";
+      };
+      msg.appendChild(document.createElement("br"));
+      msg.appendChild(use);
+    }
+    return;
+  }
+
+  let d=state.dogs.find(x=>
+    x.name.toLowerCase()===name.toLowerCase() &&
+    x.owner.toLowerCase()===owner.toLowerCase()
+  );
+
+  if(!d) {
+    d={id:uid(),name,owner,vaxExpiry:expiry,notes:[]};
+    state.dogs.push(d);
+  } else {
+    d.vaxExpiry=expiry;
+  }
+
+  if(state.bookings.some(b=>b.dogId===d.id&&b.date===date)) {
+    msg.style.color="var(--red)";
+    msg.textContent="This dog is already booked for that date.";
+    return;
+  }
+
+  state.bookings.push({
+    id:uid(),dogId:d.id,date,
+    checkedIn:false,notes:[]
+  });
+
+  selectedDate=bookingDay;
+  save();
+  closeModal();
+  $("bookingForm").reset();
+  renderOwnerSelect();
+  renderAll();
+  toast("Booking saved for "+d.name+" ✓");
+});
+
+/* Navigation and form controls */
+document.querySelectorAll(".nav button").forEach(btn=>{
+  btn.addEventListener("click",()=>switchView(btn.dataset.view));
+});
+$("addBookingBtn").addEventListener("click",openModal);
+$("selectedAddBtn").addEventListener("click",openModal);
+$("closeModal").addEventListener("click",closeModal);
+$("cancelModal").addEventListener("click",closeModal);
+$("bookingModal").addEventListener("click",e=>{
+  if(e.target===$("bookingModal"))closeModal();
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape")closeModal();
+});
+$("todayWeekBtn").addEventListener("click",()=>{
+  selectedDate=new Date(today);
+  renderAll();
+});
+$("todaySearch").addEventListener("input",renderToday);
+$("ownerSelect").addEventListener("change",renderPupdate);
+
+/* Restore sample data for testing, from the browser console. */
+window.resetWaggyDemo=()=>{
+  if(!confirm("Restore sample data and discard local changes?"))return;
+  localStorage.removeItem(STORAGE_KEY);
+  state=makeSampleData();
+  selectedDate=new Date(today);
+  save();
+  renderOwnerSelect();
+  renderAll();
+  toast("Sample data restored.");
+};
+
+/* Start app and restore saved browser data. */
+state=load();
+renderOwnerSelect();
+renderAll();
+</script>
+</body>
+</html>
